@@ -1,0 +1,40 @@
+<html>
+  <head>
+    <title>Webpack 2 demo</title>
+    <style>
+      body {
+        background: #333;
+        color: white;
+        padding: 0;
+        margin: 0;
+      }
+
+      .overlay {
+        transition: 0.3s 0.1s opacity;
+        padding: 3px;
+        position: absolute;
+        width: 100vw;
+        background: rgba(0, 0, 0, 0.3);
+
+        &:hover {
+          opacity: 0.1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="overlay">
+      <p class="title">
+        A draw loop a day: Simple watchers.
+      </p>
+
+
+      <div class="label">
+        <p>Day 3/365</p>
+        <p>Graham P Heath</p>
+      </div>
+    </div>
+
+    <script src="bundle.js"></script>
+  </body>
+</html>
