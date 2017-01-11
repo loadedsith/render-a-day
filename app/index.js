@@ -86,7 +86,6 @@ function spriteActions (sprites, action) {
     case 'POINT_AT':
       if (sprites[action.index]) {
         sprites[action.index].rotation = action.value || 0;
-        console.log('action.value', action.value);
       }
       break;
     case 'ROTATE':
