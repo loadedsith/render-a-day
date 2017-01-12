@@ -43,8 +43,10 @@ function updateStage() {
   const stageState = stageStore.getState();
   const h = stageState.height;
   const w = stageState.width;
+
   renderer.view.style.width = w + "px";
   renderer.view.style.height = h + "px";
+
   renderer.resize(w, h);
 }
 
