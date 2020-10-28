@@ -9,6 +9,15 @@ document.body.appendChild(renderer.view);
 
 // create the root of the scene graph
 const stage = new PIXI.Container();
+const overlayStage = new PIXI.Container();
+const spritesStage = new PIXI.Container();
+
+const web = new PIXI.Graphics();
+web.lineStyle(4, 0xffd900, 1);
+
+overlayStage.addChild(web);
+stage.addChild(overlayStage);
+stage.addChild(spritesStage);
 
 const createLogo = function() {
   const texture = PIXI.Texture.fromImage('img/logo@2x.png');
@@ -21,19 +30,51 @@ const createLogo = function() {
 }
 
 function render() {
-  const sprites = spriteStore.getState();
+  const spritesStore = spriteStore.getState();
 
-  while (stage.children.length < sprites.length) {
-    stage.addChild(createLogo());
+  while (spritesStage.children.length < spritesStore.length) {
+    spritesStage.addChild(createLogo());
   }
 
-  for (var i = 0; i < sprites.length; i++) {
-    let sprite = sprites[i];
-    let child = stage.getChildAt(i);
+  // if (spritesStore.length > 0) {
+  //   web.moveTo(spritesStore[0].position.x, spritesStore[0].position.y);
+  // }
+  let points = [];
+
+  if (spritesStore.length > 0) {
+    points.push(spritesStore[0].position.x);
+    points.push(spritesStore[0].position.y);
+  }
+  for (var i = spritesStore.length - 1; i >= 0; i--) {
+    let sprite = spritesStore[i];
+    points.push(sprite.position.x);
+    points.push(sprite.position.y);
+  }
+
+  if (spritesStore.length > 0) {
+    points.push(spritesStore[0].position.x);
+    points.push(spritesStore[0].position.y);
+  }
+
+  // Close the loop.
+  if (spritesStore.length > 0) {
+    // points.push(spritesStore[spritesStore.length - 1].position.x);
+    // points.push(spritesStore[spritesStore.length - 1].position.y);
+  }
+
+  // web.removeChildren();
+  web.clear();
+  web.lineStyle(4, 0xffd900, 1);
+  web.drawPolygon(points);
+
+  for (var j = 0; j < spritesStore.length; j++) {
+    let sprite = spritesStore[j];
+    let child = spritesStage.getChildAt(j);
 
     child.rotation = sprite.rotation;
     child.position.set(sprite.position.x, sprite.position.y);
   }
+
   // render the container
   renderer.render(stage);
 }
@@ -105,11 +146,11 @@ function spriteActions (sprites, action) {
   return sprites;
 }
 
-var stageStore = Redux.createStore(stageActions);
+var stageStore = Redux.createStore(stageActions, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
 
 stageStore.subscribe(updateStage);
 
-var spriteStore = Redux.createStore(spriteActions);
+var spriteStore = Redux.createStore(spriteActions, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
 
 spriteStore.subscribe(render);
 
@@ -134,6 +175,14 @@ document.addEventListener('click', function(event) {
         y: event.clientY
       }
   });
+});
+
+spriteStore.dispatch({
+    type: 'ADD',
+    event: {
+      x: 100,
+      y: 100
+    }
 });
 
 document.addEventListener('mousemove', function(event) {
